@@ -249,10 +249,12 @@ if arquivo_path:
             medias_ch,
             x='Tipo',
             y='Média de Horas',
+            text='Média de Horas',
             color='Tipo',
             title="Média de Horas por Atividade",
             color_discrete_sequence=px.colors.qualitative.Set3
         )
+        fig_ch.update_traces(texttemplate='%{text:.1f}', textposition='outside')
         st.plotly_chart(fig_ch, use_container_width=True)
 
         # --- TABELA DE DADOS ---
@@ -270,4 +272,5 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
 
