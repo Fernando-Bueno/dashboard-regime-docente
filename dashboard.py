@@ -164,7 +164,7 @@ if arquivo_path:
         cores_regime = {
             'Horista (H)': '#A39161', # Dourado
             'Parcial (P)': '#00ACA1', # Verde FCM
-            'Integral (I)': '#90D5FF' # Azul Claro
+            'Integral (I)': '#87CEEB' # Azul Claro
         }
 
         with col_reg1:
@@ -250,6 +250,7 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
 
 
 
