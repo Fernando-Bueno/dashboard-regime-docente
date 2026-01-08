@@ -235,28 +235,6 @@ if arquivo_path:
             )
             st.plotly_chart(fig_tit_pie, use_container_width=True)
 
-        # --- ANÁLISE DETALHADA ---
-        st.subheader("📋 Detalhamento da Carga Horária")
-        
-        # Preparar dados para boxplot ou barras empilhadas
-        cols_ch = ['CH Teórica', 'CH Prática', 'CH Extensão', 'CH Estágio', 'PÓS', 'Pesquisa e Extensão']
-        
-        # Calcular médias por tipo
-        medias_ch = df_filtrado[cols_ch].mean().reset_index()
-        medias_ch.columns = ['Tipo', 'Média de Horas']
-        
-        fig_ch = px.bar(
-            medias_ch,
-            x='Tipo',
-            y='Média de Horas',
-            text='Média de Horas',
-            color='Tipo',
-            title="Média de Horas por Atividade",
-            color_discrete_sequence=px.colors.qualitative.Set3
-        )
-        fig_ch.update_traces(texttemplate='%{text:.1f}', textposition='outside')
-        st.plotly_chart(fig_ch, use_container_width=True)
-
         # --- TABELA DE DADOS ---
         with st.expander("Ver Dados Brutos"):
             st.dataframe(df_filtrado, use_container_width=True)
@@ -272,6 +250,7 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
 
 
 
