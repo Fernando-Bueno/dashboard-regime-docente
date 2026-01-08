@@ -60,7 +60,7 @@ with col_logo:
         pass
 
 with col_titulo:
-    st.title("Dashboard de Análise de Regime Docente")
+    st.title("Dashboard de Análise de Regime Docente 2025-2")
     st.markdown("Faculdade de Ciências Médicas de Minas Gerais - FCM-MG")
 
 st.markdown("---")
@@ -270,3 +270,4 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
