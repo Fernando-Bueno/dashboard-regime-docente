@@ -146,7 +146,7 @@ if arquivo_path:
             
             pct_qualificados = (qtd_qualificados / total_titulados * 100) if total_titulados > 0 else 0
             
-            st.metric("Doutores e Mestres", f"{qtd_qualificados} ({pct_qualificados:.1f}%)", help="Percentual em relação ao total de D, M e E")
+            st.metric("Doutores e Mestres", f"{qtd_qualificados} ({pct_qualificados:.1f}%)", help="Percentual em relação ao total de Doutores, Mestres e Especialistas")
 
         st.markdown("---")
 
@@ -272,5 +272,6 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
 
 
