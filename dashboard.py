@@ -193,7 +193,7 @@ if arquivo_path:
                 names='Legenda',
                 color='Legenda',
                 color_discrete_map=cores_regime,
-                category_orders={'Legenda': ordem_regime}
+                category_orders={'Legenda': ordem_regime},
                 hole=0.5,
                 title="Percentual por Regime"
             )
@@ -255,6 +255,7 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
 
 
 
