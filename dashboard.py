@@ -161,6 +161,9 @@ if arquivo_path:
         map_regime = {'H': 'Horista (H)', 'P': 'Parcial (P)', 'I': 'Integral (I)'}
         regime_counts['Legenda'] = regime_counts['Regime'].map(map_regime)
         
+        # Forçar ordem específica
+        ordem_regime = ['Horista (H)', 'Parcial (P)', 'Integral (I)']
+                
         cores_regime = {
             'Horista (H)': '#A39161', # Dourado
             'Parcial (P)': '#00ACA1', # Verde FCM
@@ -176,6 +179,7 @@ if arquivo_path:
                 text='Quantidade',
                 color='Legenda',
                 color_discrete_map=cores_regime,
+                category_orders={'Legenda': ordem_regime},
                 title="Quantitativo por Regime"
             )
             fig_reg_bar.update_layout(showlegend=False)
@@ -250,6 +254,7 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
 
 
 
