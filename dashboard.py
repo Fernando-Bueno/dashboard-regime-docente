@@ -182,7 +182,6 @@ if arquivo_path:
                 category_orders={'Legenda': ordem_regime},
                 title="Quantitativo por Regime"
             )
-            fig_reg_bar.update_traces(textfont=dict(color='white', weight='bold'))
             fig_reg_bar.update_layout(showlegend=False)
             st.plotly_chart(fig_reg_bar, use_container_width=True)
             
@@ -198,7 +197,6 @@ if arquivo_path:
                 hole=0.5,
                 title="Percentual por Regime"
             )
-            fig_reg_pie.update_traces(textfont=dict(color='white', weight='bold'))
             st.plotly_chart(fig_reg_pie, use_container_width=True)
 
         st.markdown("---")
@@ -226,7 +224,6 @@ if arquivo_path:
                 color_discrete_sequence=px.colors.qualitative.Pastel,
                 title="Quantitativo por Titulação"
             )
-            fig_tit_bar.update_traces(textfont=dict(color='white', weight='bold'))
             fig_tit_bar.update_layout(showlegend=False)
             st.plotly_chart(fig_tit_bar, use_container_width=True)
             
@@ -241,7 +238,6 @@ if arquivo_path:
                 hole=0.5,
                 title="Percentual por Titulação"
             )
-            fig_tit_pie.update_traces(textfont=dict(color='white', weight='bold'))
             st.plotly_chart(fig_tit_pie, use_container_width=True)
 
         # --- TABELA DE DADOS ---
@@ -259,6 +255,7 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
+
 
 
 
