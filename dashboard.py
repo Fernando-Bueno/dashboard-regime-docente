@@ -48,7 +48,7 @@ def carregar_dados(caminho_arquivo):
         return None
 
 # Título e Header
-col_logo, col_titulo = st.columns([1, 5])
+col_logo, col_titulo = st.columns([0.15, 0.85])
 
 with col_logo:
     try:
@@ -60,8 +60,12 @@ with col_logo:
         pass
 
 with col_titulo:
-    st.title("Dashboard de Análise de Regime Docente 2025-2")
-    st.markdown("Faculdade de Ciências Médicas de Minas Gerais - FCM-MG")
+    st.markdown("""
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100px;">
+            <h1 style="margin: 0; font-size: 2.4rem; color: #333;">Dashboard de Análise de Regime Docente 2026-1</h1>
+            <p style="margin: 0; font-size: 1.1rem; color: #A39161;">Faculdade de Ciências Médicas de Minas Gerais - FCM-MG</p>
+        </div>
+    """, unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -103,8 +107,16 @@ if arquivo_path:
             default=[]
         )
         
-        # Filtro de Departamento
-        deptos_unicos = sorted(df['Departamento'].dropna().unique().astype(str))
+        # Filtro de Departamento (Dependente do Curso)
+        if filtro_curso:
+            # Se houver curso selecionado, filtrar departamentos apenas desse(s) curso(s)
+            pattern_curso = '|'.join(filtro_curso)
+            df_curso_filtrado = df[df['Curso'].astype(str).str.contains(pattern_curso, na=False)]
+            deptos_unicos = sorted(df_curso_filtrado['Departamento'].dropna().unique().astype(str))
+        else:
+            # Se não houver curso selecionado, mostrar todos
+            deptos_unicos = sorted(df['Departamento'].dropna().unique().astype(str))
+            
         todos_deptos = set()
         for d in deptos_unicos:
             for sub_d in d.split('\n'):
@@ -116,6 +128,9 @@ if arquivo_path:
             options=sorted(list(todos_deptos)),
             default=[]
         )
+        
+        # Filtro de CH Sala de aula > 0
+        filtro_ch_sala = st.sidebar.checkbox("Docentes em aula")
         
         # Aplicar Filtros
         df_filtrado = df.copy()
@@ -129,24 +144,114 @@ if arquivo_path:
             pattern_depto = '|'.join(filtro_depto)
             df_filtrado = df_filtrado[df_filtrado['Departamento'].astype(str).str.contains(pattern_depto, na=False)]
             
+        if filtro_ch_sala:
+            if 'CH Sala de aula' in df_filtrado.columns:
+                 df_filtrado = df_filtrado[pd.to_numeric(df_filtrado['CH Sala de aula'], errors='coerce') > 0]
+            
         # --- KPIs ---
-        col1, col2 = st.columns(2)
+        # Definir colunas para os KPIs (2 linhas de 3 colunas)
+        # Linha 1: Docentes, Titulados, Prod >= 9
+        # Linha 2: Prod 8, Prod 6-7, Prod <= 5
         
-        with col1:
-            st.metric("Total de Docentes", len(df_filtrado))
+        # Calcular métricas de Produção Científica
+        if 'Produção Científica' in df_filtrado.columns:
+            # Garantir que é numérico
+            prod_cientifica = pd.to_numeric(df_filtrado['Produção Científica'], errors='coerce').fillna(0)
+        else:
+            prod_cientifica = pd.Series([0] * len(df_filtrado))
+
+        total_docentes = len(df_filtrado)
+        
+        # Cálculos de Produção
+        prod_9_mais = len(prod_cientifica[prod_cientifica >= 9])
+        pct_9_mais = (prod_9_mais / total_docentes * 100) if total_docentes > 0 else 0
+        
+        prod_8 = len(prod_cientifica[prod_cientifica == 8])
+        pct_8 = (prod_8 / total_docentes * 100) if total_docentes > 0 else 0
+        
+        prod_6_7 = len(prod_cientifica[(prod_cientifica >= 6) & (prod_cientifica <= 7)])
+        pct_6_7 = (prod_6_7 / total_docentes * 100) if total_docentes > 0 else 0
+        
+        prod_5_menos = len(prod_cientifica[prod_cientifica <= 5])
+        pct_5_menos = (prod_5_menos / total_docentes * 100) if total_docentes > 0 else 0
+
+        # Linha 1 de KPIs
+        kpi1, kpi2, kpi3 = st.columns(3)
+        
+        with kpi1:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div style="font-size: 0.8rem; color: #666;">Total de Docentes</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #00ACA1;">
+                    {total_docentes}
+                </div>
+                <div style="font-size: 1.2rem; color: black;">👤</div>
+            </div>
+            """, unsafe_allow_html=True)
             
-        with col2:
+        with kpi2:
             # Contagem Doutores (D) + Mestres (M)
-            # Percentual sobre Total de Titulados (D + M + E)
-            
             df_titulados = df_filtrado[df_filtrado['Titulação'].isin(['D', 'M', 'E'])]
-            total_titulados = len(df_titulados)
-            
+            total_titulados_geral = len(df_titulados)
             qtd_qualificados = len(df_filtrado[df_filtrado['Titulação'].isin(['D', 'M'])])
+            pct_qualificados = (qtd_qualificados / total_titulados_geral * 100) if total_titulados_geral > 0 else 0
             
-            pct_qualificados = (qtd_qualificados / total_titulados * 100) if total_titulados > 0 else 0
+            st.markdown(f"""
+            <div class="metric-card">
+                <div style="font-size: 0.8rem; color: #666;">Doutores e Mestres</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #00ACA1;">
+                    {qtd_qualificados} <span style="font-size: 1rem;">({pct_qualificados:.1f}%)</span>
+                </div>
+                <div style="font-size: 1.2rem;">🎓</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with kpi3:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div style="font-size: 0.8rem; color: #666;">Produção ≥ 9</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #00ACA1;">
+                    {prod_9_mais} <span style="font-size: 1rem;">({pct_9_mais:.1f}%)</span>
+                </div>
+                <div style="font-size: 1.2rem;">5️⃣ <span style="color: #FFD700; text-shadow: 0 0 2px black;">★</span></div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Linha 2 de KPIs
+        kpi4, kpi5, kpi6 = st.columns(3)
+        
+        with kpi4:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div style="font-size: 0.8rem; color: #666;">Produção = 8</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #00ACA1;">
+                    {prod_8} <span style="font-size: 1rem;">({pct_8:.1f}%)</span>
+                </div>
+                <div style="font-size: 1.2rem;"><span style="color: #C0C0C0; text-shadow: 0 0 1px black;">★</span></div>
+            </div>
+            """, unsafe_allow_html=True)
             
-            st.metric("Doutores e Mestres", f"{qtd_qualificados} ({pct_qualificados:.1f}%)", help="Percentual em relação ao total de Doutores, Mestres e Especialistas")
+        with kpi5:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div style="font-size: 0.8rem; color: #666;">Produção 6 ou 7</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #00ACA1;">
+                    {prod_6_7} <span style="font-size: 1rem;">({pct_6_7:.1f}%)</span>
+                </div>
+                <div style="font-size: 1.2rem;"><span style="color: #CD7F32; text-shadow: 0 0 1px black;">★</span></div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        with kpi6:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div style="font-size: 0.8rem; color: #666;">Produção ≤ 5</div>
+                <div style="font-size: 1.8rem; font-weight: bold; color: #00ACA1;">
+                    {prod_5_menos} <span style="font-size: 1rem;">({pct_5_menos:.1f}%)</span>
+                </div>
+                <div style="font-size: 1.2rem;"><span style="color: #808080;">★</span></div>
+            </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("---")
 
@@ -160,14 +265,14 @@ if arquivo_path:
         # Mapa de nomes legíveis
         map_regime = {'H': 'Horista (H)', 'P': 'Parcial (P)', 'I': 'Integral (I)'}
         regime_counts['Legenda'] = regime_counts['Regime'].map(map_regime)
-        
+
         # Forçar ordem específica
         ordem_regime = ['Horista (H)', 'Parcial (P)', 'Integral (I)']
-                
+        
         cores_regime = {
             'Horista (H)': '#A39161', # Dourado
             'Parcial (P)': '#00ACA1', # Verde FCM
-            'Integral (I)': '#87CEEB' # Azul Claro
+            'Integral (I)': '#004D40' # Verde Escuro
         }
 
         with col_reg1:
@@ -183,7 +288,14 @@ if arquivo_path:
                 title="Quantitativo por Regime"
             )
             fig_reg_bar.update_traces(textfont=dict(color='white', weight='bold'))
-            fig_reg_bar.update_layout(showlegend=False)
+            
+            # Ajuste do eixo Y para ter margem superior
+            max_y = regime_counts['Quantidade'].max()
+            margem_y = max_y * 1.15  # 15% de margem
+            fig_reg_bar.update_layout(
+                showlegend=False,
+                yaxis=dict(range=[0, margem_y])
+            )
             st.plotly_chart(fig_reg_bar, use_container_width=True)
             
         with col_reg2:
@@ -227,7 +339,14 @@ if arquivo_path:
                 title="Quantitativo por Titulação"
             )
             fig_tit_bar.update_traces(textfont=dict(color='white', weight='bold'))
-            fig_tit_bar.update_layout(showlegend=False)
+            
+            # Ajuste do eixo Y para ter margem superior
+            max_y_tit = titulacao_counts['Quantidade'].max()
+            margem_y_tit = max_y_tit * 1.15
+            fig_tit_bar.update_layout(
+                showlegend=False,
+                yaxis=dict(range=[0, margem_y_tit])
+            )
             st.plotly_chart(fig_tit_bar, use_container_width=True)
             
         with col_tit2:
@@ -259,14 +378,3 @@ else:
     2. Arraste o arquivo `Regime_Data...xlsx` para a barra lateral.
     3. Explore os dados!
     """)
-
-
-
-
-
-
-
-
-
-
-
