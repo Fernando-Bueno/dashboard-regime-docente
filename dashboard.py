@@ -30,6 +30,140 @@ st.markdown("""
             border-radius: 0.5rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
+        /* Estilo da Sidebar */
+        [data-testid="stSidebar"] {
+            background-color: #00ACA1;
+        }
+        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+            color: white !important;
+        }
+        [data-testid="stSidebar"] label {
+            color: white !important;
+        }
+        [data-testid="stSidebar"] .stCheckbox label span p {
+            color: white !important;
+        }
+        /* Forçar TODAS as fontes de texto da sidebar para branco */
+        [data-testid="stSidebar"] p, 
+        [data-testid="stSidebar"] span, 
+        [data-testid="stSidebar"] div, 
+        [data-testid="stSidebar"] label {
+            color: white !important;
+        }
+
+        /* Especificamente para o Toggle Switch */
+        [data-testid="stSidebar"] .stToggle label p {
+            color: white !important;
+            background-color: transparent !important;
+        }
+        [data-testid="stSidebar"] .stToggle div[data-testid="stMarkdownContainer"] > p {
+            color: white !important;
+        }
+
+        /* Cor do Toggle Switch quando ativo (checked) - Focado apenas no elemento switch */
+        [data-testid="stSidebar"] .stToggle input:checked + div {
+             background-color: white !important;
+             border-color: white !important;
+        }
+
+        /* Bolinha (Thumb) quando ativo */
+        [data-testid="stSidebar"] .stToggle input:checked + div::after {
+            background-color: #A39161 !important;
+        }
+        
+        /* Remover qualquer sombra ou outline vermelho */
+        [data-testid="stSidebar"] .stToggle input:focus + div,
+        [data-testid="stSidebar"] .stToggle input:active + div {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+        /* Estilo das Tags do Multiselect */
+        span[data-baseweb="tag"] {
+            background-color: #9E9E9E !important; /* Cinza claro */
+        }
+        span[data-baseweb="tag"] span {
+            color: white !important;
+        }
+        
+        /* Fundo transparente para o File Uploader (Drag and drop) na Sidebar */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section {
+            background-color: transparent !important;
+            border: 1px dashed white !important; /* Opcional: borda branca para manter visibilidade */
+        }
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section > div {
+             background-color: transparent !important;
+        }
+        /* Garantir que o ícone e texto de upload sejam brancos (Exceto botão) */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section span,
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section div,
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section small {
+             color: white !important;
+        }
+
+        /* Tradução "Drag and drop file here" - Focado no primeiro span */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section > div > div > span:first-of-type {
+            color: transparent !important;
+            position: relative;
+        }
+        
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section > div > div > span:first-of-type::after {
+            content: "Arraste e solte o arquivo aqui";
+            color: white !important;
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            width: max-content;
+        }
+
+        /* Tradução "Limit 200MB per file" - Suporte para small e segundo span */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section > div > div > small,
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section > div > div > span:nth-of-type(2) {
+            color: transparent !important;
+            position: relative;
+        }
+        
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section > div > div > small::after,
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section > div > div > span:nth-of-type(2)::after {
+            content: "Limite por arquivo 200MB";
+            color: white !important;
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            width: max-content;
+        }
+
+        /* Botão Browse files com fundo Dourado e Texto Personalizado */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section button {
+             background-color: #A39161 !important;
+             color: transparent !important; /* Esconde 'Browse files' */
+             border: none !important;
+             position: relative;
+        }
+        
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section button::after {
+             content: "Buscar arquivo";
+             color: white !important;
+             font-size: 1rem;
+             position: absolute;
+             left: 50%;
+             top: 50%;
+             transform: translate(-50%, -50%);
+             white-space: nowrap;
+        }
+
+        /* Hover do Botão Browse files */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section button:hover {
+             background-color: white !important;
+             color: transparent !important;
+        }
+
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] section button:hover::after {
+             color: #808080 !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -104,7 +238,8 @@ if arquivo_path:
         filtro_curso = st.sidebar.multiselect(
             "Filtrar por Curso",
             options=sorted(list(todos_cursos)),
-            default=[]
+            default=[],
+            placeholder="Selecionar..."
         )
         
         # Filtro de Departamento (Dependente do Curso)
@@ -126,11 +261,12 @@ if arquivo_path:
         filtro_depto = st.sidebar.multiselect(
             "Filtrar por Departamento",
             options=sorted(list(todos_deptos)),
-            default=[]
+            default=[],
+            placeholder="Selecionar..."
         )
         
         # Filtro de CH Sala de aula > 0
-        filtro_ch_sala = st.sidebar.checkbox("Docentes em aula")
+        filtro_ch_sala = st.sidebar.toggle("Docentes em aula")
         
         # Aplicar Filtros
         df_filtrado = df.copy()
@@ -362,6 +498,60 @@ if arquivo_path:
             )
             fig_tit_pie.update_traces(textfont=dict(color='white', weight='bold'))
             st.plotly_chart(fig_tit_pie, use_container_width=True)
+
+        st.markdown("---")
+
+        # --- GRÁFICOS DE LATTES ---
+        if 'Atualização Lattes' in df_filtrado.columns:
+            st.subheader("📅 Atualização Lattes")
+            col_lat1, col_lat2 = st.columns(2)
+            
+            lattes_counts = df_filtrado['Atualização Lattes'].value_counts().reset_index()
+            lattes_counts.columns = ['Status', 'Quantidade']
+            
+            # Cores personalizadas
+            cores_lattes = {
+                'Atualizado': '#00ACA1',     # Verde
+                'Desatualizado': '#E57373',  # Vermelho claro/suave para alerta
+                'Não Localizado': '#9E9E9E', # Cinza
+                'Sem Data': '#9E9E9E'        # Fallback
+            }
+            
+            with col_lat1:
+                # Gráfico de Coluna
+                fig_lat_bar = px.bar(
+                    lattes_counts,
+                    x='Status',
+                    y='Quantidade',
+                    text='Quantidade',
+                    color='Status',
+                    color_discrete_map=cores_lattes,
+                    title="Quantitativo por Status Lattes"
+                )
+                fig_lat_bar.update_traces(textfont=dict(color='white', weight='bold'))
+                
+                # Ajuste eixo Y
+                max_y_lat = lattes_counts['Quantidade'].max() if not lattes_counts.empty else 0
+                margem_y_lat = max_y_lat * 1.15
+                fig_lat_bar.update_layout(
+                    showlegend=False,
+                    yaxis=dict(range=[0, margem_y_lat])
+                )
+                st.plotly_chart(fig_lat_bar, use_container_width=True)
+                
+            with col_lat2:
+                # Gráfico de Rosca
+                fig_lat_pie = px.pie(
+                    lattes_counts,
+                    values='Quantidade',
+                    names='Status',
+                    color='Status',
+                    color_discrete_map=cores_lattes,
+                    hole=0.5,
+                    title="Percentual de Atualização"
+                )
+                fig_lat_pie.update_traces(textfont=dict(color='white', weight='bold'))
+                st.plotly_chart(fig_lat_pie, use_container_width=True)
 
         # --- TABELA DE DADOS ---
         with st.expander("Ver Dados Brutos"):
