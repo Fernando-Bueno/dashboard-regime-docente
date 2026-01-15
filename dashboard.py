@@ -449,7 +449,8 @@ def render_comparative_view(df_a, df_b, nome_a="Atual", nome_b="Anterior"):
         fig_reg = px.bar(
             df_regime, x='Categoria', y='Quantidade', color='Origem', barmode='group', text='Quantidade',
             title="Comparativo de Regimes",
-            color_discrete_map={nome_a: '#00ACA1', nome_b: '#A39161'}
+            color_discrete_map={nome_a: '#00ACA1', nome_b: '#A39161'},
+            category_orders={'Origem': [nome_a, nome_b]}
         )
         fig_reg.update_traces(textfont=dict(color='white', weight='bold'))
         st.plotly_chart(fig_reg, use_container_width=True)
@@ -462,7 +463,8 @@ def render_comparative_view(df_a, df_b, nome_a="Atual", nome_b="Anterior"):
         fig_tit = px.bar(
             df_tit, x='Categoria', y='Quantidade', color='Origem', barmode='group', text='Quantidade',
             title="Comparativo de Titulação",
-            color_discrete_map={nome_a: '#00ACA1', nome_b: '#A39161'}
+            color_discrete_map={nome_a: '#00ACA1', nome_b: '#A39161'},
+            category_orders={'Origem': [nome_a, nome_b]}
         )
         fig_tit.update_traces(textfont=dict(color='white', weight='bold'))
         st.plotly_chart(fig_tit, use_container_width=True)
@@ -474,7 +476,8 @@ def render_comparative_view(df_a, df_b, nome_a="Atual", nome_b="Anterior"):
         fig_lat = px.bar(
             df_lattes, x='Categoria', y='Quantidade', color='Origem', barmode='group', text='Quantidade',
             title="Comparativo Lattes",
-            color_discrete_map={nome_a: '#00ACA1', nome_b: '#A39161'}
+            color_discrete_map={nome_a: '#00ACA1', nome_b: '#A39161'},
+            category_orders={'Origem': [nome_a, nome_b]}
         )
         fig_lat.update_traces(textfont=dict(color='white', weight='bold'))
         st.plotly_chart(fig_lat, use_container_width=True)
